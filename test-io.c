@@ -38,7 +38,7 @@ int test_io(void) {
 
 	set_fpga(DIG_OV, 0);
 	sync_fpga();
-	val = ~get_fpga(DIG_VALS);
+	val = get_fpga(DIG_VALS);
 	if (val != 0x00) {
 		char msg[256];
 		snprintf(msg, sizeof(msg)-1,
@@ -53,7 +53,7 @@ int test_io(void) {
 
 	set_fpga(DIG_OV, 0x0f);
 	sync_fpga();
-	val = ~get_fpga(DIG_VALS);
+	val = get_fpga(DIG_VALS);
 	if (val != 0xff) {
 		char msg[256];
 		snprintf(msg, sizeof(msg)-1,
@@ -74,7 +74,7 @@ int test_io(void) {
 
 	set_fpga(DIG_OV, 0);
 	sync_fpga();
-	val = ~get_fpga(DIG_VALS);
+	val = get_fpga(DIG_VALS);
 	if (val != 0x00) {
 		char msg[256];
 		snprintf(msg, sizeof(msg)-1,
@@ -89,7 +89,7 @@ int test_io(void) {
 
 	set_fpga(DIG_OV, 0xf0);
 	sync_fpga();
-	val = ~get_fpga(DIG_VALS);
+	val = get_fpga(DIG_VALS);
 	if (val != 0xff) {
 		char msg[256];
 		snprintf(msg, sizeof(msg)-1,

@@ -95,10 +95,18 @@ uint8_t get_fpga(uint8_t reg) {
 }
 
 void sync_fpga(void) {
-        set_fpga(DIG_SCAN, 3);
-        set_fpga(DIG_SCAN, 2);
+	int t;
         set_fpga(DIG_SCAN, 0);
         set_fpga(DIG_SCAN, 2);
+        set_fpga(DIG_SCAN, 0);
+        set_fpga(DIG_SCAN, 1);
+        set_fpga(DIG_SCAN, 0);
+        set_fpga(DIG_SCAN, 2);
+        set_fpga(DIG_SCAN, 0);
+        set_fpga(DIG_SCAN, 1);
+        set_fpga(DIG_SCAN, 0);
+	while ((t = get_fpga(0x80)) != 2)
+		printf("T: %d\n", t);
 }
 
 uint32_t read_adc(uint32_t channel) {
