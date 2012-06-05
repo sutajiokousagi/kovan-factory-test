@@ -3,8 +3,9 @@
 #include <stdlib.h>
 #include "harness.h"
 
-int test_servo(void);
-int test_io(void);
+extern int test_servo(void);
+extern int test_io(void);
+
 
 struct tests {
 	int (*func)(void);
