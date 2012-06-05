@@ -30,7 +30,7 @@ static void text_color(int attr, int fg, int bg)
 
 void harness_error(uint32_t code, char *message) {
 	text_color(BLINK, WHITE, RED);
-	printf("ERROR:");
+	printf("ERROR");
 	text_color(RESET, WHITE, BLACK);
 	printf(" ");
 	text_color(BRIGHT, BLUE, BLACK);
@@ -44,7 +44,7 @@ void harness_error(uint32_t code, char *message) {
 
 void harness_info(uint32_t code, char *message) {
 	text_color(BRIGHT, BLACK, GREEN);
-	printf("INFO:");
+	printf("INFO");
 	text_color(RESET, WHITE, BLACK);
 	printf(" ");
 	text_color(BRIGHT, BLUE, BLACK);
