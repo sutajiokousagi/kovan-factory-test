@@ -1,0 +1,2 @@
+This package runs a number of tests on a Kovan device, designed to ensure
+that it was constructed properly.
