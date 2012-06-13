@@ -52,7 +52,6 @@ static void set_pwm_degrees(uint32_t pwm, uint32_t deg) {
 }
 
 int test_servo(void) {
-	char msg[512];
 	uint32_t val;
 	int i;
 	set_pwm_period(PWM_PERIOD);
@@ -65,28 +64,20 @@ int test_servo(void) {
 		usleep(200000);
 		val = read_adc(adc);
 
-		if (val < 50 || val > 110) {
-			snprintf(msg, sizeof(msg)-1, "PWM %d, ADC %d, value expected to be between 50 and 110, read as %d", pwm, adc, val);
-			harness_error(pwm+1, msg);
-		}
-		else {
-			snprintf(msg, sizeof(msg)-1, "PWM %d, ADC %d, value nominal at %d", pwm, adc, val);
-			harness_info(pwm+1, msg);
-		}
+		if (val < 50 || val > 110)
+			harness_error(pwm+1, "PWM %d, ADC %d, value expected to be between 50 and 110, read as %d", pwm, adc, val);
+		else
+			harness_info(pwm+1, "PWM %d, ADC %d, value nominal at %d", pwm, adc, val);
 
 
 		set_pwm_degrees(pwm, 360);
 		usleep(200000);
 		val = read_adc(adc);
 
-		if (val < 130 || val > 170) {
-			snprintf(msg, sizeof(msg)-1, "PWM %d, ADC %d, value expected to be between 130 and 180, read as %d", pwm, adc, val);
-			harness_error(pwm+1, msg);
-		}
-		else {
-			snprintf(msg, sizeof(msg)-1, "PWM %d, ADC %d, value nominal at %d", pwm, adc, val);
-			harness_info(pwm+1, msg);
-		}
+		if (val < 130 || val > 170)
+			harness_error(pwm+1, "PWM %d, ADC %d, value expected to be between 130 and 180, read as %d", pwm, adc, val);
+		else
+			harness_info(pwm+1, "PWM %d, ADC %d, value nominal at %d", pwm, adc, val);
 	}
 
 	return 0;
