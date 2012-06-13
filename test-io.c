@@ -39,13 +39,10 @@ int test_io(void) {
 	set_fpga(DIG_OV, 0);
 	sync_fpga();
 	val = get_fpga(DIG_VALS);
-	if (val != 0x00) {
-		char msg[256];
-		snprintf(msg, sizeof(msg)-1,
+	if (val != 0x00)
+		harness_error(1,
 			"Lower-nybble test - Expected 0x00, got 0x%02x",
 			val);
-		harness_error(1, msg);
-	}
 	else
 		harness_info(1, "Lower-nybble test correct: 0x00");
 
@@ -54,13 +51,10 @@ int test_io(void) {
 	set_fpga(DIG_OV, 0x0f);
 	sync_fpga();
 	val = get_fpga(DIG_VALS);
-	if (val != 0xff) {
-		char msg[256];
-		snprintf(msg, sizeof(msg)-1,
+	if (val != 0xff)
+		harness_error(2,
 			"Lower-nybble test - Expected 0xff, got 0x%02x",
 			val);
-		harness_error(2, msg);
-	}
 	else
 		harness_info(2, "Lower-nybble test correct: 0xff");
 
@@ -75,13 +69,10 @@ int test_io(void) {
 	set_fpga(DIG_OV, 0);
 	sync_fpga();
 	val = get_fpga(DIG_VALS);
-	if (val != 0x00) {
-		char msg[256];
-		snprintf(msg, sizeof(msg)-1,
+	if (val != 0x00)
+		harness_error(3,
 			"Upper-nybble test - Expected 0x00, got 0x%02x",
 			val);
-		harness_error(3, msg);
-	}
 	else
 		harness_info(3, "Upper-nybble test correct: 0x00");
 
@@ -90,13 +81,10 @@ int test_io(void) {
 	set_fpga(DIG_OV, 0xf0);
 	sync_fpga();
 	val = get_fpga(DIG_VALS);
-	if (val != 0xff) {
-		char msg[256];
-		snprintf(msg, sizeof(msg)-1,
+	if (val != 0xff)
+		harness_error(4,
 			"Upper-nybble test - Expected 0xff, got 0x%02x",
 			val);
-		harness_error(4, msg);
-	}
 	else
 		harness_info(4, "Upper-nybble test correct: 0xff");
 
