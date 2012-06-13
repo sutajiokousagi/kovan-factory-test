@@ -1,18 +1,30 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 #include <alsa/asoundlib.h>
-#include "harness.h"
 
+#include "harness.h"
+#include "fpga.h"
+
+#define SND_BUF_SIZE 400
+
+// 44100 = 440 * 100 = 220 * 200 (200 samples high, 200 samples low)
 int test_audio(void) {
 	int i;
+	int adc, val;
 	int err;
-	short buf[128];
+	short buf[200*2*2];
 	unsigned int rate;
 
-	snd_pcm_t *playback_handle;
+	snd_pcm_t *pcm;
 	snd_pcm_hw_params_t *hw_params;
 
-	if ((err = snd_pcm_open (&playback_handle, "default", SND_PCM_STREAM_PLAYBACK, 0)) < 0) {
+	for (i=0; i<(SND_BUF_SIZE/2); i++)
+		buf[i] = SHRT_MAX;
+	for (i=(SND_BUF_SIZE/2); i<SND_BUF_SIZE; i++)
+		buf[i] = 0;
+
+	if ((err = snd_pcm_open (&pcm, "default", SND_PCM_STREAM_PLAYBACK, 0)) < 0) {
 		harness_error(0, "Cannot open default audio device (%s)",
 			 snd_strerror(err));
 		return 1;
@@ -24,38 +36,38 @@ int test_audio(void) {
 		return 1;
 	}
 			 
-	if ((err = snd_pcm_hw_params_any (playback_handle, hw_params)) < 0) {
+	if ((err = snd_pcm_hw_params_any (pcm, hw_params)) < 0) {
 		harness_error(2, "cannot initialize hardware parameter structure (%s)",
 			 snd_strerror(err));
 		return 1;
 	}
 
-	if ((err = snd_pcm_hw_params_set_access (playback_handle, hw_params, SND_PCM_ACCESS_RW_INTERLEAVED)) < 0) {
+	if ((err = snd_pcm_hw_params_set_access (pcm, hw_params, SND_PCM_ACCESS_RW_INTERLEAVED)) < 0) {
 		harness_error(3, "cannot set access type (%s)",
 			 snd_strerror(err));
 		return 1;
 	}
 
-	if ((err = snd_pcm_hw_params_set_format (playback_handle, hw_params, SND_PCM_FORMAT_S16_LE)) < 0) {
+	if ((err = snd_pcm_hw_params_set_format (pcm, hw_params, SND_PCM_FORMAT_S16_LE)) < 0) {
 		harness_error(4, "cannot set sample format (%s)",
 			 snd_strerror(err));
 		return 1;
 	}
 
 	rate = 44100;
-	if ((err = snd_pcm_hw_params_set_rate_near (playback_handle, hw_params, &rate, 0)) < 0) {
+	if ((err = snd_pcm_hw_params_set_rate_near (pcm, hw_params, &rate, 0)) < 0) {
 		harness_error(5, "cannot set sample rate (%s)",
 			 snd_strerror(err));
 		return 1;
 	}
 
-	if ((err = snd_pcm_hw_params_set_channels (playback_handle, hw_params, 2)) < 0) {
+	if ((err = snd_pcm_hw_params_set_channels (pcm, hw_params, 2)) < 0) {
 		harness_error(6, "cannot set channel count (%s)",
 			 snd_strerror(err));
 		return 1;
 	}
 
-	if ((err = snd_pcm_hw_params (playback_handle, hw_params)) < 0) {
+	if ((err = snd_pcm_hw_params (pcm, hw_params)) < 0) {
 		harness_error(7, "cannot set parameters (%s)",
 			 snd_strerror(err));
 		return 1;
@@ -63,20 +75,30 @@ int test_audio(void) {
 
 	snd_pcm_hw_params_free (hw_params);
 
-	if ((err = snd_pcm_prepare (playback_handle)) < 0) {
+	if ((err = snd_pcm_prepare (pcm)) < 0) {
 		harness_error(8, "cannot prepare audio interface for use (%s)",
 			 snd_strerror(err));
 		return 1;
 	}
 
-	for (i = 0; i < 10; ++i) {
-		if ((err = snd_pcm_writei (playback_handle, buf, 128)) != 128) {
-			harness_error(9, "write to audio interface failed (%s)",
-				 snd_strerror(err));
-			return 1;
+
+	for (adc=8; adc <= 11; adc++) {
+		for (i=0; i<50; i++) {
+			if ((err = snd_pcm_writei(pcm, buf, SND_BUF_SIZE)) != SND_BUF_SIZE) {
+				harness_error(9, "write to audio interface failed (%s)",
+					 snd_strerror(err));
+				return 1;
+			}
 		}
+		
+		val = read_adc(adc);
+		if (val < 100)
+			harness_error(adc, "ADC %d value incorrect: %d", adc, val);
+		else
+			harness_info(adc, "ADC %d value nominal: %d", adc, val);
 	}
 
-	snd_pcm_close (playback_handle);
+	snd_pcm_drain(pcm);
+	snd_pcm_close(pcm);
 	return 0;
 }
