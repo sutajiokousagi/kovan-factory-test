@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <stdarg.h>
 
 #define RESET		0
 #define BRIGHT 		1
@@ -28,7 +29,9 @@ static void text_color(int attr, int fg, int bg)
 	printf("%s", command);
 }
 
-void harness_error(uint32_t code, char *message) {
+void harness_error(uint32_t code, char *fmt, ...) {
+	va_list ap;
+
 	text_color(BLINK, WHITE, RED);
 	printf("ERROR");
 	text_color(RESET, WHITE, BLACK);
@@ -37,12 +40,17 @@ void harness_error(uint32_t code, char *message) {
 	printf("%d", code);
 	text_color(RESET, WHITE, BLACK);
 	printf(" ");
-	printf("%s", message);
-	printf("\n");
+
+
+	va_start(ap, fmt);
+	vprintf(fmt, ap);
+	va_end(ap);
 	text_color(RESET, WHITE, BLACK);
 }
 
-void harness_info(uint32_t code, char *message) {
+void harness_info(uint32_t code, char *fmt, ...) {
+	va_list ap;
+
 	text_color(BRIGHT, BLACK, GREEN);
 	printf("INFO");
 	text_color(RESET, WHITE, BLACK);
@@ -51,7 +59,30 @@ void harness_info(uint32_t code, char *message) {
 	printf("%d", code);
 	text_color(RESET, WHITE, BLACK);
 	printf(" ");
-	printf("%s", message);
-	printf("\n");
+
+	
+	va_start(ap, fmt);
+	vprintf(fmt, ap);
+	va_end(ap);
+	text_color(RESET, WHITE, BLACK);
+}
+
+
+void harness_debug(uint32_t code, char *fmt, ...) {
+	va_list ap;
+
+	text_color(BRIGHT, WHITE, BLUE);
+	printf("ERROR");
+	text_color(RESET, WHITE, BLACK);
+	printf(" ");
+	text_color(BRIGHT, BLUE, BLACK);
+	printf("%d", code);
+	text_color(RESET, WHITE, BLACK);
+	printf(" ");
+
+
+	va_start(ap, fmt);
+	vprintf(fmt, ap);
+	va_end(ap);
 	text_color(RESET, WHITE, BLACK);
 }
