@@ -5,6 +5,7 @@
 
 extern int test_servo(void);
 extern int test_io(void);
+extern int test_usb(void);
 
 
 struct tests {
@@ -20,6 +21,10 @@ static struct tests tests[] = {
 	{
 		.func = test_servo,
 		.name = "ADC and servos",
+	},
+	{
+		.func = test_usb,
+		.name = "USB ports",
 	},
 };
 	
