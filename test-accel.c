@@ -80,7 +80,8 @@ int test_accel_start(void) {
 
 int test_accel_finish(void) {
 	if (is_running == THR_ERROR) {
-		harness_error(0, "I2C failed at some point");
+		harness_error(0, "I2C failed at some point: %s",
+			i2c_return_message);
 		return 1;
 	}
 	should_quit = 1;
