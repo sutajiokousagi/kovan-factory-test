@@ -5,6 +5,7 @@
 
 extern int test_servo(void);
 extern int test_io(void);
+extern int test_accel_start(void);
 
 
 struct tests {
@@ -12,7 +13,13 @@ struct tests {
 	char *name;
 };
 
+
+
 static struct tests tests[] = {
+	{
+		.func = test_accel_start,
+		.name = "Begin background accelerometer read",
+	},
 	{
 		.func = test_io,
 		.name = "Digital I/O",
