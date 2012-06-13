@@ -37,33 +37,30 @@ int main(int argc, char **argv) {
 
 		argv++;
 		while (--argc > 0) {
-			char bfr[512];
 			test_to_run = strtoul(*argv, NULL, 0);
 			if (test_to_run > (sizeof(tests) / sizeof(*tests))) {
-				harness_error(test_to_run, "Test is out of range!");
+				harness_error(test_to_run,
+				 "Test %d is out of range!  %d tests available.",
+				test_to_run, (sizeof(tests)/sizeof(*tests)));
 				argv++;
 				continue;
 			}
-			snprintf(bfr, sizeof(bfr)-1, "Starting test \"%s\"",
-				 tests[test_to_run].name);
-			harness_info(test_to_run, bfr);
+			harness_info(test_to_run, "Starting test \"%s\"",
+				tests[test_to_run].name);
 			tests[test_to_run].func();
 			argv++;
 		}
 	}
 
 	else {
-		char bfr[512];
-		snprintf(bfr, sizeof(bfr)-1, "Running %d tests",
+		harness_info(0, "Running %d tests",
 			 (sizeof(tests) / sizeof(*tests)));
-		harness_info(0, bfr);
 
 		for (test_to_run = 0;
 		     test_to_run < (sizeof(tests) / sizeof(*tests));
 		     test_to_run++) {
-			snprintf(bfr, sizeof(bfr)-1, "Starting test \"%s\"",
+			harness_info(test_to_run, "Starting test \"%s\"",
 				 tests[test_to_run].name);
-			harness_info(test_to_run, bfr);
 			tests[test_to_run].func();
 		}
 	}
