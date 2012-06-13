@@ -27,6 +27,7 @@ int write_fpga(uint8_t start_reg, void *buffer, uint32_t bytes)
 	if(!i2c_fd) {
 		if ((i2c_fd = open(i2c_device, O_RDWR))==-1) {
 			perror("Unable to open fpga device");
+			i2c_fd = 0;
 			return 1;
 		}
 	}
@@ -56,9 +57,11 @@ int read_fpga(uint8_t start_reg, void *buffer, int bytes)
 	struct i2c_rdwr_ioctl_data packets;
 	struct i2c_msg messages[2];
 
+	bzero(buffer, bytes);
 	if (!i2c_fd) {
 		if ((i2c_fd = open(i2c_device, O_RDWR))==-1) {
 			perror("Unable to open fpga device");
+			i2c_fd = 0;
 			return 1;
 		}
 	}
@@ -94,19 +97,38 @@ uint8_t get_fpga(uint8_t reg) {
 	return val;
 }
 
-void sync_fpga(void) {
-	int t;
-        set_fpga(DIG_SCAN, 0);
-        set_fpga(DIG_SCAN, 2);
-        set_fpga(DIG_SCAN, 0);
-        set_fpga(DIG_SCAN, 1);
-        set_fpga(DIG_SCAN, 0);
-        set_fpga(DIG_SCAN, 2);
-        set_fpga(DIG_SCAN, 0);
-        set_fpga(DIG_SCAN, 1);
-        set_fpga(DIG_SCAN, 0);
-	while ((t = get_fpga(0x80)) != 2)
-		printf("T: %d\n", t);
+int sync_fpga(void) {
+	int t, i;
+
+	/* Refresh the scan chain twice.  Once to write out the new values,
+	and a second time to read them back. */
+        if(set_fpga(DIG_SCAN, 0))
+		return -1;
+        if(set_fpga(DIG_SCAN, 2))
+		return -1;
+        if(set_fpga(DIG_SCAN, 0))
+		return -1;
+        if(set_fpga(DIG_SCAN, 1))
+		return -1;
+
+        if(set_fpga(DIG_SCAN, 0))
+		return -1;
+        if(set_fpga(DIG_SCAN, 2))
+		return -1;
+        if(set_fpga(DIG_SCAN, 0))
+		return -1;
+        if(set_fpga(DIG_SCAN, 1))
+		return -1;
+        if(set_fpga(DIG_SCAN, 0))
+		return -1;
+
+	/* Wait for the FPGA to go ready */
+	for (t=0, i=0; t!=2 && i<100; t=get_fpga(0x80), i++)
+		usleep(1000);
+
+	if (t != 2)
+		return -1;
+	return 0;
 }
 
 uint32_t read_adc(uint32_t channel) {
