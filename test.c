@@ -6,6 +6,8 @@
 extern int test_servo(void);
 extern int test_io(void);
 extern int test_usb(void);
+extern int test_audio(void);
+extern int test_serial(void);
 extern int test_accel_start(void);
 
 
@@ -17,19 +19,27 @@ struct tests {
 
 
 static struct tests tests[] = {
-	{
+	{ // 0
 		.func = test_accel_start,
 		.name = "Begin background accelerometer read",
 	},
-	{
-		.func = test_io,
-		.name = "Digital I/O",
+	{ // 1
+		.func = test_audio,
+		.name = "Test audio generation",
 	},
-	{
+	{ // 2
+		.func = test_serial,
+		.name = "Test serial ports",
+	},
+	{ // 3
 		.func = test_servo,
 		.name = "ADC and servos",
 	},
-	{
+	{ // 4
+		.func = test_io,
+		.name = "Digital I/O",
+	},
+	{ // 5
 		.func = test_usb,
 		.name = "USB ports",
 	},

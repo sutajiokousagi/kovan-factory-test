@@ -1,5 +1,6 @@
 SOURCES=test.c fpga.c harness.c \
-	 test-usb.c test-io.c test-servo.c test-accel.c
+	 test-serial.c test-audio.c test-usb.c test-io.c \
+	 test-servo.c test-accel.c
 EXEC=test
 OBJECTS=$(SOURCES:.c=.o)
 MY_CFLAGS += -Wall -Werror -O0 -g
