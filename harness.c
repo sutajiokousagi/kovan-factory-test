@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdarg.h>
+#include "harness.h"
 
 #define RESET		0
 #define BRIGHT 		1
@@ -21,12 +22,19 @@
 #define	WHITE		7
 
 
+static int current_test = -1;
+
 static void text_color(int attr, int fg, int bg)
 {	char command[15];
 
 	/* Command is the control command to the terminal */
 	snprintf(command, sizeof(command)-1, "%c[%d;%d;%dm", 0x1B, attr, fg + 30, bg + 40);
 	printf("%s", command);
+}
+
+void harness_begin(char *test_name, int test_number) {
+	current_test = test_number;
+	harness_info(test_number, "Beginning test \"%s\"", test_name);
 }
 
 void harness_error(uint32_t code, char *fmt, ...) {
@@ -36,6 +44,10 @@ void harness_error(uint32_t code, char *fmt, ...) {
 	printf("ERROR");
 	text_color(RESET, WHITE, BLACK);
 	printf(" ");
+	text_color(BRIGHT, CYAN, BLACK);
+	printf("%d", current_test);
+	text_color(RESET, WHITE, BLACK);
+	printf("/");
 	text_color(BRIGHT, BLUE, BLACK);
 	printf("%d", code);
 	text_color(RESET, WHITE, BLACK);
@@ -56,6 +68,10 @@ void harness_info(uint32_t code, char *fmt, ...) {
 	printf("INFO");
 	text_color(RESET, WHITE, BLACK);
 	printf(" ");
+	text_color(BRIGHT, CYAN, BLACK);
+	printf("%d", current_test);
+	text_color(RESET, WHITE, BLACK);
+	printf("/");
 	text_color(BRIGHT, BLUE, BLACK);
 	printf("%d", code);
 	text_color(RESET, WHITE, BLACK);
@@ -77,6 +93,10 @@ void harness_debug(uint32_t code, char *fmt, ...) {
 	printf("ERROR");
 	text_color(RESET, WHITE, BLACK);
 	printf(" ");
+	text_color(BRIGHT, CYAN, BLACK);
+	printf("%d", current_test);
+	text_color(RESET, WHITE, BLACK);
+	printf("/");
 	text_color(BRIGHT, BLUE, BLACK);
 	printf("%d", code);
 	text_color(RESET, WHITE, BLACK);
