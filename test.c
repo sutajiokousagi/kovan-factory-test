@@ -71,8 +71,7 @@ int main(int argc, char **argv) {
 		for (test_to_run = 0;
 		     test_to_run < (sizeof(tests) / sizeof(*tests));
 		     test_to_run++) {
-			harness_info(test_to_run, "Starting test \"%s\"",
-				 tests[test_to_run].name);
+			harness_begin(tests[test_to_run].name, test_to_run);
 			tests[test_to_run].func();
 		}
 	}
