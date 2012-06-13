@@ -9,6 +9,7 @@ extern int test_usb(void);
 extern int test_audio(void);
 extern int test_serial(void);
 extern int test_accel_start(void);
+extern int test_accel_finish(void);
 
 
 struct tests {
@@ -42,6 +43,10 @@ static struct tests tests[] = {
 	{ // 5
 		.func = test_usb,
 		.name = "USB ports",
+	},
+	{ // 6
+		.func = test_accel_finish,
+		.name = "Read accelerometer result",
 	},
 };
 	
