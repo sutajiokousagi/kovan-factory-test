@@ -46,6 +46,7 @@ void harness_error(uint32_t code, char *fmt, ...) {
 	vprintf(fmt, ap);
 	va_end(ap);
 	text_color(RESET, WHITE, BLACK);
+	printf("\n");
 }
 
 void harness_info(uint32_t code, char *fmt, ...) {
@@ -65,6 +66,7 @@ void harness_info(uint32_t code, char *fmt, ...) {
 	vprintf(fmt, ap);
 	va_end(ap);
 	text_color(RESET, WHITE, BLACK);
+	printf("\n");
 }
 
 
@@ -85,4 +87,5 @@ void harness_debug(uint32_t code, char *fmt, ...) {
 	vprintf(fmt, ap);
 	va_end(ap);
 	text_color(RESET, WHITE, BLACK);
+	printf("\n");
 }
