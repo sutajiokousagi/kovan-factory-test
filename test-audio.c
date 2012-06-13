@@ -13,7 +13,7 @@ int test_audio(void) {
 	int i;
 	int adc, val;
 	int err;
-	short buf[200*2*2];
+	short buf[SND_BUF_SIZE];
 	unsigned int rate;
 
 	snd_pcm_t *pcm;
