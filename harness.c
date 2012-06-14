@@ -90,7 +90,7 @@ void harness_debug(uint32_t code, char *fmt, ...) {
 	va_list ap;
 
 	text_color(BRIGHT, WHITE, BLUE);
-	printf("ERROR");
+	printf("DEBUG");
 	text_color(RESET, WHITE, BLACK);
 	printf(" ");
 	text_color(BRIGHT, CYAN, BLACK);
