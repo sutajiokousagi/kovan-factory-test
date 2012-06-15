@@ -2,6 +2,9 @@
 #include <linux/i2c-dev.h>
 #include <fcntl.h>
 #include <pthread.h>
+#include <string.h>
+#include <stdio.h>
+#include <errno.h>
 #include <sys/ioctl.h>
 #include "harness.h"
 
@@ -13,7 +16,7 @@
 #define THR_SUCCESS 2
 
 static pthread_t i2c_thread;
-static char *i2c_return_message;
+static char i2c_return_message[256];
 static int i2c_return_code;
 static int should_quit;
 static int is_running = THR_STOPPED;
@@ -27,7 +30,8 @@ void *i2c_background(void *_ignored) {
 	fd = open("/dev/i2c-1", O_RDWR);
 	if (-1 == fd) {
 		i2c_return_code = 2;
-		i2c_return_message = "Unable to open I2C device";
+		snprintf(i2c_return_message, sizeof(i2c_return_message)-1,
+			"Unable to open I2C device: %s", strerror(errno));
 		is_running = THR_ERROR;
 		pthread_exit(NULL);
 	}
@@ -53,7 +57,8 @@ void *i2c_background(void *_ignored) {
 		
 		if(ioctl(fd, I2C_RDWR, &packets) < 0) {
 			i2c_return_code = 1;
-			i2c_return_message = "I2C failed";
+			snprintf(i2c_return_message, sizeof(i2c_return_message)-1,
+				"I2C failed: %s", strerror(errno));
 			is_running = THR_ERROR;
 			pthread_exit(NULL);
 		}
@@ -66,7 +71,7 @@ void *i2c_background(void *_ignored) {
 int test_accel_start(void) {
 
 	i2c_return_code = 0;
-	i2c_return_message = "I2C stable";
+	strcpy(i2c_return_message, "I2C stable");
 	should_quit = 0;
 
 	if (0 != pthread_create(&i2c_thread, NULL, i2c_background, NULL)) {
