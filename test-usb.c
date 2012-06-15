@@ -218,6 +218,5 @@ int test_usb(void) {
 	}
 
 out:
-	my_delete_module("g_zero");
 	return ret;
 }
