@@ -8,7 +8,7 @@
 
 #define SND_BUF_SIZE 400
 
-uint32_t adc_min[] = {450, 350, 250, 150};
+uint32_t adc_min[] = {430, 350, 250, 150};
 uint32_t adc_max[] = {550, 480, 325, 200};
 
 // 44100 = 440 * 100 = 220 * 200 (200 samples high, 200 samples low)
