@@ -61,6 +61,7 @@ int test_servo(void) {
 		int adc = i+12;
 
 		set_pwm_degrees(pwm, 0);
+		val = read_adc(adc);
 		usleep(200000);
 		val = read_adc(adc);
 
@@ -71,6 +72,7 @@ int test_servo(void) {
 
 
 		set_pwm_degrees(pwm, 360);
+		val = read_adc(adc);
 		usleep(200000);
 		val = read_adc(adc);
 
