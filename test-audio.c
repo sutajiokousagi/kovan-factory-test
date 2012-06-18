@@ -8,6 +8,9 @@
 
 #define SND_BUF_SIZE 400
 
+uint32_t adc_min[] = {450, 350, 250, 150};
+uint32_t adc_max[] = {550, 480, 325, 200};
+
 // 44100 = 440 * 100 = 220 * 200 (200 samples high, 200 samples low)
 int test_audio(void) {
 	int i;
@@ -92,8 +95,11 @@ int test_audio(void) {
 		}
 		
 		val = read_adc(adc);
-		if (val < 100)
-			harness_error(adc, "ADC %d value incorrect: %d", adc, val);
+		usleep(20000);
+		val = read_adc(adc);
+
+		if (val < adc_min[adc-8] || val > adc_max[adc-8])
+			harness_error(adc, "ADC %d value incorrect.  Wanted between %d and %d, got : %d", adc, adc_min[adc-8], adc_max[adc-8], val);
 		else
 			harness_info(adc, "ADC %d value nominal: %d", adc, val);
 	}
