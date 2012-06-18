@@ -9,7 +9,6 @@
 #include <sys/ioctl.h>
 #include <linux/usbdevice_fs.h>
 
-
 #include <sys/utsname.h>
 #include <syscall.h>
 
@@ -21,6 +20,8 @@
 #define G_ZERO_PATH "kernel/drivers/usb/gadget/g_zero.ko"
 #define USBTEST_PATH "kernel/drivers/usb/misc/usbtest.ko"
 #define USB_PATH "/sys/bus/usb/devices"
+
+#define CABLE_TRIES 5
 
 struct usb_descr {
 	int busnum;
@@ -199,8 +200,8 @@ int test_usb(void) {
 	my_init_module(USBTEST_PATH);
 
 	bzero(&descr, sizeof(descr));
-	for (tries=0; tries<10; tries++) {
-		harness_info(3, "Looking for loopback cable (try %d/10)...", tries+1);
+	for (tries=0; tries<CABLE_TRIES; tries++) {
+		harness_info(3, "Looking for loopback cable (try %d/%d)...", tries+1, CABLE_TRIES);
 		if (find_usb_device(&descr, "Gadget Zero"))
 			break;
 		sleep(1);
