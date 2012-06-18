@@ -19,7 +19,7 @@
 #define delete_module(mod) syscall(__NR_delete_module, mod)
 
 #define G_ZERO_PATH "kernel/drivers/usb/gadget/g_zero.ko"
-#define USBTEST_PATH "kernel/drivers/usb/usbtest.ko"
+#define USBTEST_PATH "kernel/drivers/usb/misc/usbtest.ko"
 #define USB_PATH "/sys/bus/usb/devices"
 
 struct usb_descr {
