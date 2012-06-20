@@ -7,6 +7,7 @@
 #include <unistd.h>
 
 #include "gpio.h"
+#include "harness.h"
 
 
 #define DIG_SCAN 0x45
@@ -166,7 +167,7 @@ static uint32_t read_adc_internal(uint32_t channel, uint8_t is_battery) {
         set_fpga(ADC_SAMPLE, channel);
 
 	/* Wait for ADC to go ready */
-	for (t=0, i=0; t!=2 && i<100; t=get_fpga(0x83)&1, i++)
+	for (t=0, i=0; !(t&1) && i<100; t=get_fpga(0x83), i++)
 		usleep(1000);
 
         read_fpga(ADC_VAL, &result, sizeof(result));
@@ -175,10 +176,10 @@ static uint32_t read_adc_internal(uint32_t channel, uint8_t is_battery) {
 
 uint32_t read_battery(void) {
 	read_adc_internal(8, 1);
-	read_adc_internal(8, 1);
 	return read_adc_internal(8, 1);
 }
 
 uint32_t read_adc(uint32_t channel) {
+	read_adc_internal(channel, 0);
 	return read_adc_internal(channel, 0);
 }
