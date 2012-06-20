@@ -1,10 +1,10 @@
-SOURCES=test.c fpga.c harness.c \
+SOURCES=test.c fpga.c harness.c gpio.c \
 	 test-serial.c test-audio.c test-usb.c test-io.c \
-	 test-servo.c test-accel.c test-wifi.c
+	 test-servo.c test-accel.c test-battery.c
 EXEC=test
 OBJECTS=$(SOURCES:.c=.o)
-MY_CFLAGS += -Wall -Werror -O0 -g `pkg-config alsa --cflags` `pkg-config libcurl --cflags`
-MY_LIBS += -lpthread `pkg-config alsa --libs` `pkg-config libcurl --libs`
+MY_CFLAGS += -Wall -Werror -O0 -g `pkg-config alsa --cflags`
+MY_LIBS += -lpthread `pkg-config alsa --libs`
 
 all: $(OBJECTS)
 	$(CC) $(LIBS) $(LDFLAGS) $(OBJECTS) $(MY_LIBS) -o $(EXEC)
