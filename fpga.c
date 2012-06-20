@@ -1,23 +1,31 @@
 #include <stdio.h>
 #include <sys/ioctl.h>
-#include <linux/i2c.h>
-#include <linux/i2c-dev.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <fcntl.h>
 #include <string.h>
 #include <unistd.h>
 
+#include "gpio.h"
+
+
 #define DIG_SCAN 0x45
 
 #define ADC_SAMPLE 0x46
 #define ADC_VAL 0x81
+
+/* This GPIO needs to go high to measure battery voltage */
+#define ADC8_GPIO 79
 
 
 static int i2c_fd;
 static char *i2c_device = "/dev/i2c-0";
 static uint8_t fpga_addr = 0x1e;
 
+
+#ifdef linux
+#include <linux/i2c.h>
+#include <linux/i2c-dev.h>
 int write_fpga(uint8_t start_reg, void *buffer, uint32_t bytes)
 {
 	uint8_t data[bytes+1];
@@ -87,6 +95,19 @@ int read_fpga(uint8_t start_reg, void *buffer, int bytes)
 	return 0;
 }
 
+#else
+
+int write_fpga(uint8_t start_reg, void *buffer, uint32_t bytes) {
+    return 0;
+}
+
+int read_fpga(uint8_t start_reg, void *buffer, int bytes) {
+    bzero(buffer, bytes);
+    return 0;
+}
+
+#endif //linux
+
 int set_fpga(uint8_t reg, uint8_t val) {
 	return write_fpga(reg, &val, sizeof(val));
 }
@@ -131,12 +152,33 @@ int sync_fpga(void) {
 	return 0;
 }
 
-uint32_t read_adc(uint32_t channel) {
+static uint32_t read_adc_internal(uint32_t channel, uint8_t is_battery) {
         uint16_t result;
+	int t, i;
 
+	if (channel == 8) {
+		gpio_export(ADC8_GPIO);
+		gpio_set_direction(ADC8_GPIO, 1);
+		gpio_set_value(ADC8_GPIO, is_battery);
+	}
         set_fpga(ADC_SAMPLE, channel);
         set_fpga(ADC_SAMPLE, channel | 0x10);
         set_fpga(ADC_SAMPLE, channel);
+
+	/* Wait for ADC to go ready */
+	for (t=0, i=0; t!=2 && i<100; t=get_fpga(0x83)&1, i++)
+		usleep(1000);
+
         read_fpga(ADC_VAL, &result, sizeof(result));
         return result;
+}
+
+uint32_t read_battery(void) {
+	read_adc_internal(8, 1);
+	read_adc_internal(8, 1);
+	return read_adc_internal(8, 1);
+}
+
+uint32_t read_adc(uint32_t channel) {
+	return read_adc_internal(channel, 0);
 }
