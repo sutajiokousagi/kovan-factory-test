@@ -10,7 +10,7 @@ extern int test_audio(void);
 extern int test_serial(void);
 extern int test_accel_start(void);
 extern int test_accel_finish(void);
-extern int test_wifi(void);
+extern int test_battery(void);
 
 
 struct tests {
@@ -19,6 +19,9 @@ struct tests {
 };
 
 
+static int test_wifi(void) {
+	return 0;
+}
 
 static struct tests tests[] = {
 	{ // 0
@@ -52,6 +55,10 @@ static struct tests tests[] = {
 	{ // 7
 		.func = test_wifi,
 		.name = "Wifi and other USB port",
+	},
+	{ // 8
+		.func = test_battery,
+		.name = "Battery tests",
 	},
 };
 	
