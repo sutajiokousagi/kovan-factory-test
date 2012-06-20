@@ -62,8 +62,6 @@ int test_servo(void) {
 
 		set_pwm_degrees(pwm, 0);
 		val = read_adc(adc);
-		usleep(200000);
-		val = read_adc(adc);
 
 		if (val < 50 || val > 110)
 			harness_error(pwm+1, "PWM %d, ADC %d, value expected to be between 50 and 110, read as %d", pwm, adc, val);
@@ -72,8 +70,6 @@ int test_servo(void) {
 
 
 		set_pwm_degrees(pwm, 360);
-		val = read_adc(adc);
-		usleep(200000);
 		val = read_adc(adc);
 
 		if (val < 130 || val > 170)
