@@ -7,7 +7,6 @@
 #include <unistd.h>
 
 #include "gpio.h"
-#include "harness.h"
 
 
 #define DIG_SCAN 0x45
